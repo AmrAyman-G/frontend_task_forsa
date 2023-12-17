@@ -32,6 +32,7 @@ Make sure you have the following installed before running the application:
 - "react-native-responsive-fontsize": "^0.5.1",
 - "react-native-safe-area-context": "4.6.3"
 
+
  
 ### Installation
 
