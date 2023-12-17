@@ -1,20 +1,24 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import "react-native-gesture-handler";
+import TabNavigator from "./src/navigation/TabNavigator";
+import { NavigationContainer } from "@react-navigation/native";
+import { ApiProvider } from "./src/Data/ApiContext";
+import { useEffect } from "react";
+import { fetchSelectedLanguage } from "./src/constants/LanguageDetector";
+
+const getLanguage = async () => {
+  await fetchSelectedLanguage();
+};
 
 export default function App() {
+  useEffect(() => {
+    getLanguage();
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <ApiProvider>
+        <TabNavigator />
+      </ApiProvider>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
