@@ -1,7 +1,6 @@
-import React, { memo, useState } from "react";
+import React, { memo, useContext, useEffect, useState } from "react";
 import {
   Image,
-  Platform,
   Share,
   StatusBar,
   StyleSheet,
@@ -13,57 +12,120 @@ import TopBackgroundClip from "../components/TopBackgroundClip";
 import Header from "../components/Header";
 import { RFValue } from "react-native-responsive-fontsize";
 import { SelectList } from "react-native-dropdown-select-list";
-import { Ionicons, AntDesign, FontAwesome } from "@expo/vector-icons";
 import { items } from "../constants/types/items";
-
-const sharignApp = async () => {
-  try {
-    await Share.share({ message: "Forsa Task App Created By Amr Ayman" });
-  } catch (error) {
-    if (__DEV__) {
-      console.error("Error sharing:", error);
-    } else return;
-  }
-};
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import LanguageContext from "../constants/Language/LanguageContext";
+import i18n from "../../i18n";
 
 const Profile = memo(() => {
   const [selected, setSelected] = useState("");
   const translatedItem = items().translate;
-
-  const data = [
+  const { currentLanguage, setCurrentLanguage } = useContext(LanguageContext);
+  const languages = [
     { key: "1", value: "English" },
-    { key: "2", value: "Arabic" },
+    { key: "2", value: "عربي" },
   ];
+
+  // Load current language
+  useEffect(() => {
+    const userlanguage = currentLanguage === "ar" ? "عربي" : "English";
+    setSelected(userlanguage);
+  }, []);
+
+  //Sharing Apps
+  const sharignApp = async () => {
+    try {
+      await Share.share({ message: translatedItem.message });
+    } catch (error) {
+      if (__DEV__) {
+        console.error("Error sharing:", error);
+      } else return;
+    }
+  };
+
+  //Save Selected Language
+  const saveSelectedLanguage = async (val) => {
+    setSelected(val);
+    switch (val) {
+      case "1":
+        await AsyncStorage.setItem("selectedLanguage", "en");
+        i18n.changeLanguage("en");
+        setCurrentLanguage("en");
+        break;
+      case "2":
+        await AsyncStorage.setItem("selectedLanguage", "ar");
+        i18n.changeLanguage("ar");
+        setCurrentLanguage("ar");
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
       <TopBackgroundClip height={"25%"} top={"-5%"} />
       <Header name={translatedItem.Profile} />
-      <View style={styles.profileInfo}>
+
+      {/* Profile */}
+      <View
+        style={[
+          styles.profileInfo,
+          { flexDirection: currentLanguage === "ar" ? "row-reverse" : "row" },
+        ]}
+      >
         <Image
-          width={RFValue(110)}
-          height={RFValue(92)}
-          borderRadius={RFValue(10)}
-          resizeMode="cover"
-          source={require("../assets/images/profileImage.png")}
+          style={styles.profileImage}
+          source={require("../assets/images/profileImage.webp")}
         />
-        <Text style={styles.nameFont}>Amr Ayman</Text>
+        <Text
+          style={[
+            styles.nameFont,
+            {
+              textAlign: currentLanguage === "ar" ? "right" : "left",
+            },
+          ]}
+        >
+          {translatedItem.profileName}
+        </Text>
       </View>
+
+      {/* Settings */}
       <View style={styles.settings}>
         <TouchableOpacity style={{ flex: 1 }} onPress={sharignApp}>
-          <Text style={styles.settingsFonts}>Share the app</Text>
+          <Text
+            style={[
+              styles.settingsFonts,
+              { textAlign: currentLanguage === "ar" ? "right" : "left" },
+            ]}
+          >
+            {translatedItem.shareApp}
+          </Text>
         </TouchableOpacity>
-        <View style={styles.dropdownContainer}>
-          <Text style={styles.settingsFonts}>Change Language</Text>
+        <View
+          style={[
+            styles.dropdownContainer,
+            { flexDirection: currentLanguage === "ar" ? "row-reverse" : "row" },
+          ]}
+        >
+          <Text
+            style={[
+              styles.settingsFonts,
+              { textAlign: currentLanguage === "ar" ? "right" : "left" },
+            ]}
+          >
+            {translatedItem.changeLanguage}
+          </Text>
           <SelectList
-            setSelected={(val) => setSelected(val)}
-            data={data}
-            save="value"
+            setSelected={saveSelectedLanguage}
+            data={languages}
+            save={selected}
+            placeholder={selected}
             search={false}
-            dropdownStyles={{ height: "230%", top: "-30%" }}
-            boxStyles={{ borderWidth: 0, top: "-5%" }}
-            dropdownTextStyles={{ fontSize: RFValue(15) }}
+            dropdownStyles={{ height: "280%", top: "-50%" }}
+            boxStyles={{ borderWidth: 0, height: "150%", top: "-5%" }}
+            dropdownTextStyles={{ fontSize: RFValue(15), textAlign: "center" }}
             inputStyles={{ fontSize: RFValue(15) }}
           />
         </View>
@@ -79,12 +141,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   profileInfo: {
-    flexDirection: "row",
     width: "94%",
   },
+  profileImage: {
+    width: RFValue(110),
+    height: RFValue(92),
+    borderRadius: RFValue(15),
+    resizeMode: "cover",
+  },
   nameFont: {
+    flex: 1,
     fontSize: RFValue(21),
-    marginLeft: "10%",
+    marginLeft: "5%",
+    marginRight: "5%",
   },
   settings: {
     width: "90%",
@@ -97,7 +166,6 @@ const styles = StyleSheet.create({
   },
   dropdownContainer: {
     flex: 1,
-    flexDirection: "row",
     alignItems: "flex-start",
   },
 });

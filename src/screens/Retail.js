@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { StatusBar, StyleSheet, Text, View } from "react-native";
+import { StatusBar, StyleSheet, View } from "react-native";
 import { items } from "../constants/types/items";
 import TopBackgroundClip from "../components/TopBackgroundClip";
 import Header from "../components/Header";
