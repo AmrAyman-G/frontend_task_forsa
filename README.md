@@ -31,7 +31,7 @@ Make sure you have the following installed before running the application:
 - "react-native-gesture-handler": "~2.12.0",
 - "react-native-responsive-fontsize": "^0.5.1",
 - "react-native-safe-area-context": "4.6.3"
-
+- "expo-device": "~5.4.0"
 
  
 ### Installation
