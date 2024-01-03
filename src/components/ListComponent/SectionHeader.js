@@ -1,6 +1,6 @@
 import { RFValue } from "react-native-responsive-fontsize";
 import { LinearGradient } from "expo-linear-gradient";
-import { useAdditionalLoans, useBrands } from "../../Data/ApiContext";
+import { useData } from "../../Data/ApiContext";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Image,
@@ -102,9 +102,11 @@ export default SectionHeader = () => {
     );
   };
 
-  const brands = useBrands();
-  const additionalLoans = useAdditionalLoans();
+  const brands = useData().brands;
+  const additionalLoans = useData().additionalLoans;
+
   const filteredBrands = brands.filter((item) => item.thumbnail);
+
   return (
     <View>
       <View

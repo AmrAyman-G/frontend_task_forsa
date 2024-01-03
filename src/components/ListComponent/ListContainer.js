@@ -1,15 +1,13 @@
 import React from "react";
 import { FlatList } from "react-native";
-import { useOffers } from "../../Data/ApiContext";
-
+import { useData } from "../../Data/ApiContext";
 import RenderOfferItem from "./RenderOfferItem";
 import SectionHeader from "./SectionHeader";
 
 const ListContainer = (props) => {
   const { home } = props;
-  const offers = useOffers();
+  const offers = useData().offers;
   const filteredOffers = offers.filter((item) => item.thumbnail);
-
   const renderItem = ({ item }) => {
     return <RenderOfferItem item={item} />;
   };
